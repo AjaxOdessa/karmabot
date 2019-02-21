@@ -16,7 +16,10 @@ if not botuser or not token:
 KARMA_BOT = botuser
 SLACK_CLIENT = SlackClient(token)
 
-MAX_POINTS = 5
+if not os.environ.get('SLACK_MAX_POINTS'):
+    MAX_POINTS = 5
+else:
+    MAX_POINTS = os.environ.get('SLACK_MAX_POINTS')
 
 # the first +/- is merely signaling, start counting (regex capture)
 # from second +/- onwards, so bob++ adds 1 point, bob+++ = +2, etc
@@ -26,7 +29,7 @@ IS_USER = re.compile(r'^<@[^>]+>$')
 USERNAME_CACHE = {}
 KARMA_CACHE = 'data'
 
-logging.basicConfig(level=logging.DEBUG,
+logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s %(name)-12s %(levelname)-8s %(message)s',  # noqa E501
                     datefmt='%m-%d %H:%M',
                     filename='bot.log')

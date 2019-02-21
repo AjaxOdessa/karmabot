@@ -37,7 +37,7 @@ def main():
             if not karma_changes:
                 continue
 
-            logging.debug('karma changes: {}'.format(str(karma_changes)))
+            logging.info('karma changes: {}'.format(str(karma_changes)))
             process_karma_changes(message, karma_changes)
     finally:
         logging.info('Script ended, saving karma cache to file')

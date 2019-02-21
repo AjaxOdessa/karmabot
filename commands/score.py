@@ -18,8 +18,8 @@ def get_karma(**kwargs):
 
 
 def top_karma(**kwargs):
-    """Get the PyBites members with most karma"""
-    output = ['PyBites members with most karma:']
+    """Get Cprime members with most karma"""
+    output = ['Cprime members with most karma:']
     for person, score in karmas.most_common(TOP_NUMBER):
         output.append('{:<20} -> {}'.format(person, score))
     ret = '\n'.join(output)

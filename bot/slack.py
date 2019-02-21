@@ -20,8 +20,8 @@ from commands.zen import import_this
 
 Message = namedtuple('Message', 'giverid channel text')
 
-GENERAL_CHANNEL = 'C4SFQJJ9Z'
-ADMINS = ('U4RTDPKUH', 'U4TN52NG6', 'U4SJVFMEG')  # bob, julian, pybites
+GENERAL_CHANNEL = 'CC7DQ33TJ'
+ADMINS = ('UC85DSFDY')
 TEXT_FILTER_REPLIES = dict(zen='`import this`',
                            cheers=':beers:',
                            braces='`SyntaxError: not a chance`')
@@ -59,6 +59,7 @@ def lookup_username(userid):
         userinfo = SLACK_CLIENT.api_call("users.info", user=user)
         username = userinfo['user']['name']
         USERNAME_CACHE[user] = username
+    logging.debug('Found username "{}"'.format(username))
     return username
 
 
@@ -80,7 +81,7 @@ def bot_joins_new_channel(msg):
 
     grant_user_token = os.environ.get('SLACK_KARMA_INVITE_USER_TOKEN')
     if not grant_user_token:
-        logging.info('cannot invite bot, no env SLACK_KARMA_INVITE_USER_TOKEN')
+        logging.warning('cannot invite bot, no env SLACK_KARMA_INVITE_USER_TOKEN')
         return None
 
     sc = SlackClient(grant_user_token)
@@ -140,6 +141,8 @@ def perform_bot_cmd(msg, private=True):
 
     if not command:
         return None
+
+    logging.debug("Command {} performed by {}".format(cmd, userid))
 
     kwargs = dict(user=lookup_username(user),
                   channel=channel,

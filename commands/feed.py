@@ -5,12 +5,12 @@ import ssl
 if hasattr(ssl, '_create_unverified_context'):
     ssl._create_default_https_context = ssl._create_unverified_context
 
-RSS = 'https://pybit.es/feeds/all.rss.xml'
+RSS = 'https://www.cprime.com/resources/blog/rss/'
 MAX_ENTRIES = 5
 
 
 def get_pybites_last_entries(**kwargs):
-    """Get the last 5 entries of PyBites blog (might take a bit)"""
+    """Get the last 5 entries of Cprime blog (might take a bit)"""
     data = feedparser.parse(RSS)
 
     output = []
