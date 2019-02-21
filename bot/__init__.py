@@ -13,7 +13,7 @@ if not botuser or not token:
     print('Make sure you set SLACK_KARMA_BOTUSER and SLACK_KARMA_TOKEN in env')
     sys.exit(1)
 
-KARMA_BOT = botuser
+KARMA_BOT = karmabot
 SLACK_CLIENT = SlackClient(token)
 
 if not os.environ.get('SLACK_MAX_POINTS'):
