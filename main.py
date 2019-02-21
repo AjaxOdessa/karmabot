@@ -16,7 +16,9 @@ if not SLACK_CLIENT.rtm_connect():
 
 
 def _save_cache():
-    pickle.dump(karmas, open(KARMA_CACHE, "wb"))
+	cache_file = open(KARMA_CACHE, "wb")
+    pickle.dump(karmas, cache_file)
+	cache_file.close()
 
 
 def main():
