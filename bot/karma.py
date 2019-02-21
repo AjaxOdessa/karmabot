@@ -1,5 +1,6 @@
 from . import IS_USER, MAX_POINTS, karmas
 from .slack import lookup_username, post_msg
+import logging
 
 KARMABOT = 'karmabot'
 
@@ -10,7 +11,8 @@ def _parse_karma_change(karma_change):
     if IS_USER.match(userid):
         receiver = lookup_username(userid)
     else:
-        receiver = userid.strip(' #').lower()
+        receiver = None
+        logging.debug("User '{}' doesn't exist".format(userid))
 
     points = voting.count('+') - voting.count('-')
 
@@ -24,14 +26,15 @@ def process_karma_changes(message, karma_changes):
 
         receiver, points = _parse_karma_change(karma_change)
 
-        karma = Karma(giver, receiver)
+        if receiver:
+            karma = Karma(giver, receiver)
 
-        try:
-            msg = karma.change_karma(points)
-        except Exception as exc:
-            msg = str(exc)
+            try:
+                msg = karma.change_karma(points)
+            except Exception as exc:
+                msg = str(exc)
 
-        post_msg(channel, msg)
+            post_msg(channel, msg)
 
 
 class Karma:
@@ -84,7 +87,7 @@ class Karma:
             raise RuntimeError(err)
 
         if self.giver == self.receiver:
-            raise ValueError('Sorry, cannot give karma to self')
+            raise ValueError('Do not cheat! :lying_face:')
 
         points = self._calc_final_score(points)
 

@@ -59,6 +59,7 @@ def lookup_username(userid):
         userinfo = SLACK_CLIENT.api_call("users.info", user=user)
         username = userinfo['user']['name']
         USERNAME_CACHE[user] = username
+		logging.debug("Found user '{}'".format(username))
     return username
 
 
