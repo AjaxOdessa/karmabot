@@ -32,11 +32,12 @@ PUBLIC_BOT_COMMANDS = dict(age=pybites_age,
                            add=add_command,
                            help=create_commands_table,
                            tip=get_random_tip,
-                           topchannels=get_recommended_channels)
+                           topchannels=get_recommended_channels,
+                           top_karma=top_karma)
 PRIVATE_BOT_COMMANDS = dict(feed=get_pybites_last_entries,  # takes up space
                             doc=doc_command,
                             help=create_commands_table,  # have everywhere
-                            karma=get_karma,
+                            karma=get_karma
                             )
 
 
@@ -96,11 +97,14 @@ def bot_joins_new_channel(msg):
 
 
 def _get_cmd(text, private=True):
+    logging.debug('Command "{}", private={}'.format(text,private))
     if private:
         return text.split()[0].strip().lower()
 
     # bot command needs to have bot fist in msg
-    if not text.strip('<>@').startswith((KARMA_BOT, 'karmabot')):
+    logging.debug('Bot userid is {}'.format(KARMA_BOT))
+    if not text.split()[0].strip('<>@').startswith((KARMA_BOT, 'karmabot')):
+        logging.debug('{} username not found in {}'.format(KARMA_BOT, text.split()[0].strip('<>@')))
         return None
 
     # need at least a command after karmabot
@@ -127,8 +131,9 @@ def perform_bot_cmd(msg, private=True):
     text = msg.get('text')
 
     command_set = private and PRIVATE_BOT_COMMANDS or PUBLIC_BOT_COMMANDS
-    cmd = text and _get_cmd(text, private=private)
 
+    cmd = text and _get_cmd(text, private=private)
+    logging.debug(cmd)
     if not cmd:
         return None
 
@@ -142,7 +147,7 @@ def perform_bot_cmd(msg, private=True):
     if not command:
         return None
 
-    logging.debug("Command {} performed by {}".format(cmd, userid))
+    logging.info("Command {} performed by {}".format(cmd, userid))
 
     kwargs = dict(user=lookup_username(user),
                   channel=channel,
@@ -217,7 +222,7 @@ def parse_next_msg():
     if cmd_output:
         post_msg(channel, cmd_output)
         return None
-
+    logging.debug('After command')
     if not channel or not text:
         return None
 

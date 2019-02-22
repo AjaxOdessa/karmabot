@@ -2,9 +2,6 @@ from . import IS_USER, MAX_POINTS, karmas
 from .slack import lookup_username, post_msg
 import logging
 
-KARMABOT = 'karmabot'
-
-
 def _parse_karma_change(karma_change):
     userid, voting = karma_change
 
@@ -45,6 +42,7 @@ class Karma:
         self.last_score_maxed_out = False
 
     def _calc_final_score(self, points):
+        logging.debug('Calc final score')
         if abs(points) > MAX_POINTS:
             self.last_score_maxed_out = True
             return MAX_POINTS if points > 0 else -MAX_POINTS
@@ -79,6 +77,7 @@ class Karma:
         return msg
 
     def change_karma(self, points):
+        logging.debug('change_karma')
         '''updates karmas dict and returns message string'''
         if not isinstance(points, int):
             err = ('Program bug: change_karma should '
