@@ -66,7 +66,7 @@ def lookup_username(userid):
 
 def post_msg(channel_or_user, text):
     logging.debug('posting to {}'.format(channel_or_user))
-    logging.debug(text)
+    logging.debug('[{}]'.format(text))
     SLACK_CLIENT.api_call("chat.postMessage",
                           channel=channel_or_user,
                           text=text,
@@ -220,9 +220,9 @@ def parse_next_msg():
     private = channel and channel.startswith('D')
     cmd_output = perform_bot_cmd(msg, private)
     if cmd_output:
+        logging.debug('Executed command {}'.format(cmd_output))
         post_msg(channel, cmd_output)
         return None
-    logging.debug('After command')
     if not channel or not text:
         return None
 
