@@ -9,7 +9,7 @@ def _parse_karma_change(karma_change):
         receiver = lookup_username(userid)
     else:
         receiver = None
-        logging.debug('User "{}" does not exist.'.format(userid))
+        logging.debug('Receiving user "{}" does not exist.'.format(userid))
 
     points = voting.count('+') - voting.count('-')
 
@@ -42,8 +42,6 @@ class Karma:
         self.last_score_maxed_out = False
 
     def _calc_final_score(self, points):
-        logging.debug('Calculate final score with {} points.'.format(points))
-
         if abs(points) > int(MAX_POINTS):
             self.last_score_maxed_out = True
             return int(MAX_POINTS) if points > 0 else -int(MAX_POINTS)
@@ -57,41 +55,35 @@ class Karma:
             msg = 'Thanks @{} for the extra karma'.format(self.giver)
             msg += ', my karma is {} now'.format(receiver_karma)
         else:
-            msg = 'Not cool @{} lowering my karma to {}'.format(self.giver,
-                                                                receiver_karma)
-            msg += ', but you are probably right'
-            msg += ', I will work harder next time'
+            msg = 'Not cool @{} lowering my karma to {}'.format(self.giver, receiver_karma)
+            msg += ', but you are probably right, I will work harder next time.'
+	        logging.debug('Prepared message: [{}]'.format(msg))
         return msg
 
     def _create_msg(self, points):
-        logging.debug('Creating message with {} scores'.format(points))
         poses = "'" if self.receiver.endswith('s') else "'s"
         action = 'increase' if points > 0 else 'decrease'
         receiver_karma = karmas.get(self.receiver, 0)
 
-        msg = '{}{} karma {}d to {}'.format(self.receiver,
-                                            poses,
-                                            action,
-                                            receiver_karma)
+        msg = '{}{} karma {}d to {}'.format(self.receiver, poses, action, receiver_karma)
+
         if self.last_score_maxed_out:
             msg += ' (= max {} of {})'.format(action, MAX_POINTS)
 
-        logging.debug('Prepared message: '.format(msg))
+        logging.debug('Prepared message: [{}]'.format(msg))
         return msg
 
     def change_karma(self, points):
-        logging.debug('change_karma')
         '''updates karmas dict and returns message string'''
         if not isinstance(points, int):
-            err = ('Program bug: change_karma should '
-                   'not be called with a non int for '
-                   'points arg!')
+            err = ('Program bug: change_karma should not be called with a non int for points arg!')
             raise RuntimeError(err)
 
         if self.giver == self.receiver:
             raise ValueError('Do not cheat! :lying_face:')
 
         points = self._calc_final_score(points)
+        logging.debug('Calculated points: [{}]'.format(points))
 
         karmas[self.receiver] += points
 
