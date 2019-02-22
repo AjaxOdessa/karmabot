@@ -10,9 +10,9 @@ from . import KARMA_BOT, SLACK_CLIENT, USERNAME_CACHE
 from commands.add import add_command
 from commands.age import pybites_age
 from commands.doc import doc_command
-from commands.help import create_commands_table
 from commands.feed import get_pybites_last_entries
-from commands.score import get_karma, top_karma
+from commands.help import create_commands_table
+from commands.score import get_karma, top_karma, bottom_karma
 from commands.tip import get_random_tip
 from commands.topchannels import get_recommended_channels
 from commands.welcome import welcome_user
@@ -194,15 +194,11 @@ def parse_next_msg():
         welcome_msg = AUTOMATED_COMMANDS['welcome'](user)  # new user joining
         post_msg(GENERAL_CHANNEL, welcome_msg)
         # return Message object to handle karma in main
-        return Message(giverid=KARMA_BOT,
-                       channel=GENERAL_CHANNEL,
-                       text=welcome_msg)
+        return Message(giverid=KARMA_BOT, channel=GENERAL_CHANNEL, text=welcome_msg)
     # end events
 
     # not sure but sometimes we get dicts?
-    if (not isinstance(channel, str) or
-       not isinstance(user, str) or
-       not isinstance(text, str)):
+    if (not isinstance(channel, str) or not isinstance(user, str) or not isinstance(text, str)):
         return None
 
     # ignore anything karma bot says!

@@ -26,6 +26,15 @@ def top_karma(**kwargs):
     return '```{}```'.format(ret)
 
 
+def bottom_karma(**kwargs):
+    """Get Cprime members with most karma"""
+    output = ['Cprime members with least karma:']
+    for person, score in karmas.most_common()[:-TOP_NUMBER-1:-1]:
+        output.append('{:<20} -> {}'.format(person, score))
+    ret = '\n'.join(output)
+    return '```{}```'.format(ret)
+
+
 if __name__ == '__main__':
     user, channel, text = 'bob', '#general', 'some message'
     kwargs = dict(user=user,
