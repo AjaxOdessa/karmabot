@@ -1,9 +1,6 @@
-from . import IS_USER, MAX_POINTS, karmas
+from . import KARMA_BOT,IS_USER, MAX_POINTS, karmas
 from .slack import lookup_username, post_msg
 import logging
-
-KARMABOT = 'karmabot'
-
 
 def _parse_karma_change(karma_change):
     userid, voting = karma_change
@@ -45,9 +42,11 @@ class Karma:
         self.last_score_maxed_out = False
 
     def _calc_final_score(self, points):
-        if abs(points) > MAX_POINTS:
+        logging.debug('Calculate final score with {} points.'.format(points))
+
+        if abs(points) > int(MAX_POINTS):
             self.last_score_maxed_out = True
-            return MAX_POINTS if points > 0 else -MAX_POINTS
+            return int(MAX_POINTS) if points > 0 else -int(MAX_POINTS)
         else:
             self.last_score_maxed_out = False
             return points
@@ -65,6 +64,7 @@ class Karma:
         return msg
 
     def _create_msg(self, points):
+        logging.debug('Creating message with {} scores'.format(points))
         poses = "'" if self.receiver.endswith('s') else "'s"
         action = 'increase' if points > 0 else 'decrease'
         receiver_karma = karmas.get(self.receiver, 0)
@@ -76,9 +76,11 @@ class Karma:
         if self.last_score_maxed_out:
             msg += ' (= max {} of {})'.format(action, MAX_POINTS)
 
+        logging.debug('Prepared message: '.format(msg))
         return msg
 
     def change_karma(self, points):
+        logging.debug('change_karma')
         '''updates karmas dict and returns message string'''
         if not isinstance(points, int):
             err = ('Program bug: change_karma should '
@@ -93,7 +95,7 @@ class Karma:
 
         karmas[self.receiver] += points
 
-        if self.receiver == KARMABOT:
+        if self.receiver == KARMA_BOT:
             return self._create_msg_bot_self_karma(points)
         else:
             return self._create_msg(points)
